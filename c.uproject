@@ -1,0 +1,23 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "{9696A2B7-4C94-66B5-CF25-31A31F13D714}",
+	"Category": "",
+	"Description": "",
+	"Modules": [
+		{
+			"Name": "c",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine"
+			]
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "LineOfSight",
+			"Enabled": true,
+			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/564592e6f64e47a9a2401e5216ae4738"
+		}
+	]
+}
