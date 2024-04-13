@@ -5,6 +5,7 @@
 #include "Components/SphereComponent.h"
 #include "DialogueInterface.h"
 #include "FixedCamera.h"
+#include "InteractInterface.h"
 #include "MyBarrier.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -68,6 +69,8 @@ void AMyCharacter::BeginPlay()
 
 	BoxComp->OnComponentBeginOverlap.AddDynamic(this, &AMyCharacter::NotifyActorBeginOverlap_BoxComp);
 	BoxComp->OnComponentEndOverlap.AddDynamic(this, &AMyCharacter::NotifyActorEndOverlap_BoxComp);
+
+	InitInteractWidget();
 	
 }
 
@@ -111,25 +114,44 @@ void AMyCharacter::NotifyActorBeginOverlap_BoxComp(UPrimitiveComponent* Overlapp
 {
 	if(OtherActor->GetClass()->ImplementsInterface(UDialogueInterface::StaticClass()))
 	{
-		if(Interactable)
+		if(Conversable)
 		{
-			IDialogueInterface::Execute_SetInteractableState(Interactable, false);
+			IDialogueInterface::Execute_SetConversableState(Conversable, false);
+			Conversable=OtherActor;
+		}
+		else
+		{
+			Conversable=OtherActor;
+		}
+		IDialogueInterface::Execute_SetConversableState(Conversable, true);
+	}
+
+	if(OtherActor->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
+	{
+		if(Interactable){
+			IInteractInterface::Execute_SetInteractableState(Interactable,false);
 			Interactable=OtherActor;
 		}
 		else
 		{
 			Interactable=OtherActor;
 		}
-		IDialogueInterface::Execute_SetInteractableState(Interactable, true);
+		IInteractInterface::Execute_SetInteractableState(Interactable,true);
 	}
 }
 
 void AMyCharacter::NotifyActorEndOverlap_BoxComp(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (OtherActor==Interactable)
+	if (OtherActor==Conversable)
 	{
-		IDialogueInterface::Execute_SetInteractableState(Interactable, false);
+		IDialogueInterface::Execute_SetConversableState(Conversable, false);
+		Conversable=nullptr;
+	}
+
+	if(OtherActor==Interactable)
+	{
+		IInteractInterface::Execute_SetInteractableState(Interactable,false);
 		Interactable=nullptr;
 	}
 }
@@ -236,9 +258,14 @@ void AMyCharacter::SetViewToFixedCamera()
 
 void AMyCharacter::Interact()
 {
-	if(Interactable && Interactable->GetClass()->ImplementsInterface(UDialogueInterface::StaticClass()))
+	if(Conversable && Conversable->GetClass()->ImplementsInterface(UDialogueInterface::StaticClass()))
 	{
-		IDialogueInterface::Execute_Interact(Interactable,this,DialogueShowType);
+		IDialogueInterface::Execute_Interact(Conversable,this,DialogueShowType);
+		bInInteract=true;
+	}
+	if(Interactable && Interactable->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
+	{
+		IInteractInterface::Execute_SetInteractableState(Interactable,false);
 		bInInteract=true;
 	}
 }
@@ -255,8 +282,19 @@ void AMyCharacter::ConversationClosed_Implementation()
 	bInInteract=false;
 }
 
-void AMyCharacter::SetInteractableState_Implementation(bool bCanShowInteract)
+void AMyCharacter::SetConversableState_Implementation(bool bCanShowInteract)
 {
-	IDialogueInterface::SetInteractableState_Implementation(bCanShowInteract);
+	IDialogueInterface::SetConversableState_Implementation(bCanShowInteract);
+}
+
+void AMyCharacter::InitInteractWidget()
+{
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsWithInterface(GetWorld(), UInteractInterface::StaticClass(), FoundActors);
+
+	for (AActor* Actor : FoundActors)
+	{
+		IInteractInterface::Execute_InitWidget(Actor);
+	}
 }
 

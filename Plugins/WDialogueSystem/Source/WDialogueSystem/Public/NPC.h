@@ -58,7 +58,7 @@ public:
 	void ConversationClosed_Implementation() override;
 
 	UFUNCTION()
-	void SetInteractableState_Implementation(bool bCanShowInteract) override;
+	void SetConversableState_Implementation(bool bCanShowInteract) override;
 	//////////////////////////////////////////////////////////////////////////
 
 public:

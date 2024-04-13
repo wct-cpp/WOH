@@ -31,5 +31,5 @@ public:
 	void ConversationClosed();
 	
 	UFUNCTION(BlueprintCallable,  BlueprintNativeEvent,Category="DialogueSystem")
-	void SetInteractableState(bool bCanShowInteract);
+	void SetConversableState(bool bCanShowInteract);
 };

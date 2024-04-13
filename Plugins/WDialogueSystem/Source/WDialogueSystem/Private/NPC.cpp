@@ -71,9 +71,9 @@ void ANPC::ConversationClosed_Implementation()
 	}
 }
 
-void ANPC::SetInteractableState_Implementation(bool bCanShowInteract)
+void ANPC::SetConversableState_Implementation(bool bCanShowInteract)
 {
-	IDialogueInterface::SetInteractableState_Implementation(bCanShowInteract);
+	IDialogueInterface::SetConversableState_Implementation(bCanShowInteract);
 	
 	TextRender->SetVisibility(bCanShowInteract);
 }

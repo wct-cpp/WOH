@@ -92,8 +92,11 @@ public:
 	void ConversationClosed_Implementation() override;
 
 	UFUNCTION()
-	void SetInteractableState_Implementation(bool bCanShowInteract) override;
+	void SetConversableState_Implementation(bool bCanShowInteract) override;
 	//////////////////////////////////////////////////////////////////////////
+	///
+
+	void InitInteractWidget();
 protected:
 	AMyBarrier* OverlappingBarrier;
 
@@ -104,7 +107,7 @@ protected:
 
 	AFixedCamera* FixedCamera;
 
-	AActor* Interactable;
+	AActor* Conversable;
 
 	UPROPERTY(BlueprintReadWrite)
 	EViewType ViewType;
@@ -114,6 +117,8 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Dialogue")
 	EShowType DialogueShowType;
+
+	AActor* Interactable;
 public:
 	void SetOverlappingBarrier(AMyBarrier* Barrier)
 	{
