@@ -52,7 +52,7 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 	///IDialogueInterface
 	UFUNCTION()
-	void Interact_Implementation(AActor* InstigateActor,EShowType DialogueShowType) override;
+	void InitConversation_Implementation(AActor* InstigateActor,EShowType DialogueShowType) override;
 	
 	UFUNCTION()
 	void ConversationClosed_Implementation() override;

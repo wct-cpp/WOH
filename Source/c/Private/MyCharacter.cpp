@@ -51,7 +51,7 @@ AMyCharacter::AMyCharacter()
 
 	ViewType = EViewType::TP;
 
-	bInInteract=false;
+	bInConversation=false;
 }
 
 // Called when the game starts or when spawned
@@ -158,7 +158,7 @@ void AMyCharacter::NotifyActorEndOverlap_BoxComp(UPrimitiveComponent* Overlapped
 
 void AMyCharacter::Zoom(float AxisValue)
 {
-	if(bInInteract)
+	if(bInConversation)
 	{
 		return;
 	}
@@ -258,28 +258,28 @@ void AMyCharacter::SetViewToFixedCamera()
 
 void AMyCharacter::Interact()
 {
-	if(Conversable && Conversable->GetClass()->ImplementsInterface(UDialogueInterface::StaticClass()))
+	if(Conversable && Conversable->GetClass()->ImplementsInterface(UDialogueInterface::StaticClass()) && !bInConversation)
 	{
-		IDialogueInterface::Execute_Interact(Conversable,this,DialogueShowType);
-		bInInteract=true;
+		IDialogueInterface::Execute_InitConversation(Conversable,this,DialogueShowType);
+		bInConversation=true;
 	}
-	if(Interactable && Interactable->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
+	if(Interactable && Interactable->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()) && !bInInteract)
 	{
 		IInteractInterface::Execute_SetInteractableState(Interactable,false);
 		bInInteract=true;
 	}
 }
 
-void AMyCharacter::Interact_Implementation(AActor* InstigateActor,EShowType DShowType)
+void AMyCharacter::InitConversation_Implementation(AActor* InstigateActor,EShowType DShowType)
 {
-	IDialogueInterface::Interact_Implementation(InstigateActor,DShowType);
+	IDialogueInterface::InitConversation_Implementation(InstigateActor,DShowType);
 }
 
 void AMyCharacter::ConversationClosed_Implementation()
 {
 	IDialogueInterface::ConversationClosed_Implementation();
 
-	bInInteract=false;
+	bInConversation=false;
 }
 
 void AMyCharacter::SetConversableState_Implementation(bool bCanShowInteract)

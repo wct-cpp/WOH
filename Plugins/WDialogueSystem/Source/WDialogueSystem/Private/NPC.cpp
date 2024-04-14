@@ -52,9 +52,9 @@ void ANPC::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
-void ANPC::Interact_Implementation(AActor* InstigateActor,EShowType DShowType)
+void ANPC::InitConversation_Implementation(AActor* InstigateActor,EShowType DShowType)
 {
-	IDialogueInterface::Interact_Implementation(InstigateActor,DShowType);
+	IDialogueInterface::InitConversation_Implementation(InstigateActor,DShowType);
 
 	Instigator=InstigateActor;
 	

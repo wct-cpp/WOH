@@ -25,7 +25,7 @@ class WDIALOGUESYSTEM_API IDialogueInterface
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent ,Category="DialogueSystem")
-	void Interact(AActor* InstigateActor,EShowType ShowType);
+	void InitConversation(AActor* InstigateActor,EShowType ShowType);
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="DialogueSystem")
 	void ConversationClosed();
