@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "DialogueInterface.h"
-#include "InteractInterface.h"
 #include "GameFramework/Character.h"
 #include "MyCharacter.generated.h"
 
@@ -27,7 +26,7 @@ enum class EViewType : uint8
 };
 
 UCLASS()
-class C_API AMyCharacter : public ACharacter , public IDialogueInterface ,public IInteractInterface
+class C_API AMyCharacter : public ACharacter , public IDialogueInterface
 {
 	GENERATED_BODY()
 
@@ -98,12 +97,6 @@ public:
 	///
 
 	void InitInteractWidget();
-
-	//////////////////////////////////////////////////////////////////////////
-	///IInteractInterface
-	UFUNCTION()
-	void CloseInteract_Implementation() override;
-	//////////////////////////////////////////////////////////////////////////
 protected:
 	AMyBarrier* OverlappingBarrier;
 

@@ -27,10 +27,4 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent ,Category="Interact")
 	void SetInteractableState(bool bCanShowInteract);
-
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent ,Category="Interact")
-	void Interact(AActor* InstigateActor);
-
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent ,Category="Interact")
-	void CloseInteract();
 };
