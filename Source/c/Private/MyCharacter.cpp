@@ -266,6 +266,7 @@ void AMyCharacter::Interact()
 	if(Interactable && Interactable->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()) && !bInInteract)
 	{
 		IInteractInterface::Execute_SetInteractableState(Interactable,false);
+		IInteractInterface::Execute_Interact(Interactable,this);
 		bInInteract=true;
 	}
 }
