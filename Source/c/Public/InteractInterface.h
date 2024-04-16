@@ -30,4 +30,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent ,Category="Interact")
 	void Interact(AActor* InstigateActor);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent ,Category="Interact")
+	void CloseInteract();
 };

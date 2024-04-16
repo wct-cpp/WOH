@@ -52,6 +52,7 @@ AMyCharacter::AMyCharacter()
 	ViewType = EViewType::TP;
 
 	bInConversation=false;
+	bInInteract=false;
 }
 
 // Called when the game starts or when spawned
@@ -281,6 +282,8 @@ void AMyCharacter::ConversationClosed_Implementation()
 	IDialogueInterface::ConversationClosed_Implementation();
 
 	bInConversation=false;
+
+	bInInteract=false;
 }
 
 void AMyCharacter::SetConversableState_Implementation(bool bCanShowInteract)
@@ -297,5 +300,17 @@ void AMyCharacter::InitInteractWidget()
 	{
 		IInteractInterface::Execute_InitWidget(Actor);
 	}
+}
+
+void AMyCharacter::CloseInteract_Implementation()
+{
+	IInteractInterface::CloseInteract_Implementation();
+
+	if(Interactable)
+	{
+		IInteractInterface::Execute_SetInteractableState(Interactable,true);
+	}
+	
+	bInInteract=false;
 }
 
