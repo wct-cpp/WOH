@@ -84,6 +84,8 @@ public:
 
 	void Interact();
 
+	void DectectInteractable();
+
 	//////////////////////////////////////////////////////////////////////////
 	///IDialogueInterface
 	UFUNCTION()
@@ -129,6 +131,7 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly)
 	bool bInInteract;
+
 public:
 	void SetOverlappingBarrier(AMyBarrier* Barrier)
 	{

@@ -4,6 +4,7 @@
 #include "MyCharacter.h"
 #include "Components/SphereComponent.h"
 #include "DialogueInterface.h"
+#include "DrawDebugHelpers.h"
 #include "FixedCamera.h"
 #include "InteractInterface.h"
 #include "MyBarrier.h"
@@ -80,6 +81,7 @@ void AMyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	DectectInteractable();
 }
 
 // Called to bind functionality to input
@@ -113,48 +115,13 @@ void AMyCharacter::AddControllerYawInput(float Val)
 void AMyCharacter::NotifyActorBeginOverlap_BoxComp(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                                       UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if(OtherActor->GetClass()->ImplementsInterface(UDialogueInterface::StaticClass()))
-	{
-		if(Conversable)
-		{
-			IDialogueInterface::Execute_SetConversableState(Conversable, false);
-			Conversable=OtherActor;
-		}
-		else
-		{
-			Conversable=OtherActor;
-		}
-		IDialogueInterface::Execute_SetConversableState(Conversable, true);
-	}
 
-	if(OtherActor->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
-	{
-		if(Interactable){
-			IInteractInterface::Execute_SetInteractableState(Interactable,false);
-			Interactable=OtherActor;
-		}
-		else
-		{
-			Interactable=OtherActor;
-		}
-		IInteractInterface::Execute_SetInteractableState(Interactable,true);
-	}
 }
 
 void AMyCharacter::NotifyActorEndOverlap_BoxComp(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (OtherActor==Conversable)
-	{
-		IDialogueInterface::Execute_SetConversableState(Conversable, false);
-		Conversable=nullptr;
-	}
 
-	if(OtherActor==Interactable)
-	{
-		IInteractInterface::Execute_SetInteractableState(Interactable,false);
-		Interactable=nullptr;
-	}
 }
 
 void AMyCharacter::Zoom(float AxisValue)
@@ -269,6 +236,70 @@ void AMyCharacter::Interact()
 		IInteractInterface::Execute_SetInteractableState(Interactable,false);
 		IInteractInterface::Execute_Interact(Interactable,this);
 		bInInteract=true;
+	}
+}
+
+void AMyCharacter::DectectInteractable()
+{
+	FVector StartLocation = GetActorLocation();
+	FVector ForwardVector = GetActorForwardVector();
+	
+	float TraceDistance = 200.0f; 
+	FVector EndLocation = StartLocation + (ForwardVector * TraceDistance);
+
+	FHitResult HitResult;
+	FCollisionQueryParams TraceParams;
+	TraceParams.AddIgnoredActor(this); 
+	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, ECC_Visibility, TraceParams);
+
+	// 绘制调试线条
+	/*FColor LineColor = bHit ? FColor::Green : FColor::Red; // 如果射线检测到了物体，那么线条为绿色，否则为红色
+	float LineLifeTime = 2.0f; // 线条存在的时间
+	DrawDebugLine(GetWorld(), StartLocation, EndLocation, LineColor, false, LineLifeTime);*/
+	
+	if (bHit)
+	{
+		AActor* HitActor = HitResult.GetActor();
+		if (HitActor->GetClass()->ImplementsInterface(UDialogueInterface::StaticClass()))
+		{
+			if(HitActor==Conversable)
+			{
+				return;
+			}
+			Conversable=HitActor;
+			IDialogueInterface::Execute_SetConversableState(Conversable, true);
+		}
+		else
+		{
+			if(Conversable)
+			{
+				IDialogueInterface::Execute_SetConversableState(Conversable, false);
+				Conversable=nullptr;
+			}
+		}
+		
+		if (HitActor->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
+		{
+			if(HitActor==Interactable)
+			{
+				return;
+			}
+			if(Interactable)
+			{
+				IInteractInterface::Execute_SetInteractableState(Interactable,false);
+			}
+			
+			Interactable=HitActor;
+			IInteractInterface::Execute_SetInteractableState(Interactable,true);
+		}
+		else
+		{
+			if(Interactable)
+			{
+				IInteractInterface::Execute_SetInteractableState(Interactable,false);
+				Interactable=nullptr;
+			}
+		}
 	}
 }
 
