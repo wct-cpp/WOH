@@ -152,4 +152,10 @@ public:
 	{
 		return CameraComp_First;
 	}
+
+	UFUNCTION(BlueprintCallable)
+	void SetInteractable(AActor* In)
+	{
+		Interactable=In;
+	}
 };
