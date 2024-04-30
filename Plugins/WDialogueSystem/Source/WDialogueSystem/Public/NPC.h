@@ -25,6 +25,7 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UWDialogueSystemComponent> DialogueSystemCompClass;
 
+	UPROPERTY(BlueprintReadOnly)
 	UWDialogueSystemComponent* DialogueSystemComp;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
@@ -36,6 +37,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY(BlueprintReadOnly)
 	AActor* Instigator;
 
 	UPROPERTY(BlueprintReadWrite,EditDefaultsOnly, Category = "NPC")
