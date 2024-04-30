@@ -35,7 +35,6 @@ void ANPC::BeginPlay()
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("DialogueSystemCompClass is nullptr"));
 	}
-	
 }
 
 // Called every frame
@@ -68,6 +67,7 @@ void ANPC::ConversationClosed_Implementation()
 	if(Instigator)
 	{
 		IDialogueInterface::Execute_ConversationClosed(Instigator);
+		AfterConversationClosed(Instigator);//todo:: 改为任务系统
 	}
 }
 
@@ -77,4 +77,6 @@ void ANPC::SetConversableState_Implementation(bool bCanShowInteract)
 	
 	TextRender->SetVisibility(bCanShowInteract);
 }
+
+
 

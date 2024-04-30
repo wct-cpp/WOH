@@ -233,9 +233,10 @@ void AMyCharacter::Interact()
 	}
 	if(Interactable && Interactable->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()) && !bInInteract)
 	{
+		bInInteract=true;
 		IInteractInterface::Execute_SetInteractableState(Interactable,false);
 		IInteractInterface::Execute_Interact(Interactable,this);
-		bInInteract=true;
+		
 	}
 }
 
@@ -243,23 +244,33 @@ void AMyCharacter::DectectInteractable()
 {
 	FVector StartLocation = GetActorLocation();
 	FVector ForwardVector = GetActorForwardVector();
+	FVector CameraForwardVector;
+	if(ViewType==EViewType::TP)
+	{
+		CameraForwardVector = CameraComp_Third->GetForwardVector();
+	}
+	else
+	{
+		CameraForwardVector = CameraComp_First->GetForwardVector();
+	}
 	
 	float TraceDistance = 200.0f; 
-	FVector EndLocation = StartLocation + (ForwardVector * TraceDistance);
+	FVector EndLocation = StartLocation + (CameraForwardVector * TraceDistance);
 
 	FHitResult HitResult;
 	FCollisionQueryParams TraceParams;
 	TraceParams.AddIgnoredActor(this); 
 	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, ECC_Visibility, TraceParams);
-
+	
 	// 绘制调试线条
-	/*FColor LineColor = bHit ? FColor::Green : FColor::Red; // 如果射线检测到了物体，那么线条为绿色，否则为红色
-	float LineLifeTime = 2.0f; // 线条存在的时间
-	DrawDebugLine(GetWorld(), StartLocation, EndLocation, LineColor, false, LineLifeTime);*/
+	FColor LineColor = bHit ? FColor::Green : FColor::Red; // 如果射线检测到了物体，那么线条为绿色，否则为红色
+	float LineLifeTime = 0.5f; // 线条存在的时间
+	DrawDebugLine(GetWorld(), StartLocation, EndLocation, LineColor, false, LineLifeTime);
 	
 	if (bHit)
 	{
 		AActor* HitActor = HitResult.GetActor();
+		
 		if (HitActor->GetClass()->ImplementsInterface(UDialogueInterface::StaticClass()))
 		{
 			if(HitActor==Conversable)
@@ -299,6 +310,19 @@ void AMyCharacter::DectectInteractable()
 				IInteractInterface::Execute_SetInteractableState(Interactable,false);
 				Interactable=nullptr;
 			}
+		}
+	}
+	else
+	{
+		if(Conversable)
+		{
+			IDialogueInterface::Execute_SetConversableState(Conversable, false);
+			Conversable=nullptr;
+		}
+		if(Interactable)
+		{
+			IInteractInterface::Execute_SetInteractableState(Interactable,false);
+			Interactable=nullptr;
 		}
 	}
 }
@@ -341,7 +365,7 @@ void AMyCharacter::CloseInteract_Implementation()
 	{
 		IInteractInterface::Execute_SetInteractableState(Interactable,true);
 	}
-	
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("CloseInteract"));
 	bInInteract=false;
 }
 

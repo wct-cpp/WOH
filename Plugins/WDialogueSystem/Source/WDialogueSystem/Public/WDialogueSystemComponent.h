@@ -74,6 +74,7 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	UFUNCTION(BlueprintCallable, Category = "WDialogueSystem")
 	void OpenConversation(EShowType DialogueShowType);
 
 	UFUNCTION(BlueprintCallable, Category = "WDialogueSystem")
@@ -100,6 +101,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "WDialogueSystem")
 	void RemoveDialogueProgress(int32 ProgressSteps);
+
+	UFUNCTION(BlueprintCallable, Category = "WDialogueSystem")
+	void AddDialogueProgress(int32 ProgressSteps);
 
 	UFUNCTION(BlueprintCallable, Category = "WDialogueSystem")
 	void SetDialogueTreeIndex(int32 DTI);

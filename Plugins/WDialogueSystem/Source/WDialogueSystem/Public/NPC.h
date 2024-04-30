@@ -61,6 +61,9 @@ public:
 	void SetConversableState_Implementation(bool bCanShowInteract) override;
 	//////////////////////////////////////////////////////////////////////////
 
+	UFUNCTION(BlueprintImplementableEvent, Category = "NPC")
+	void AfterConversationClosed(AActor* InstigateActor);
+
 public:
 	FText GetNickName() const { return NickName; }
 };

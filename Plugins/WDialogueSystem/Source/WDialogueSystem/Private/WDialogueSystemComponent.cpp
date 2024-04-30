@@ -212,10 +212,20 @@ void UWDialogueSystemComponent::ClearDialogueProgress()
 
 void UWDialogueSystemComponent::RemoveDialogueProgress(int32 ProgressSteps)
 {
+	DialogueProgress.Remove(DialogueIndex);
 	for(int32 i=0;i<ProgressSteps;i++)
 	{
-		DialogueIndex-=i;
+		DialogueIndex--;
 		DialogueProgress.Remove(DialogueIndex);
+	}
+}
+
+void UWDialogueSystemComponent::AddDialogueProgress(int32 ProgressSteps)
+{
+	for(int32 i=0;i<ProgressSteps;i++)
+	{
+		DialogueIndex+=i;
+		DialogueProgress.Add(DialogueIndex);
 	}
 }
 
