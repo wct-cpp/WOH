@@ -121,7 +121,7 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	EViewType ViewType;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadWrite)
 	bool bInConversation;
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Dialogue")

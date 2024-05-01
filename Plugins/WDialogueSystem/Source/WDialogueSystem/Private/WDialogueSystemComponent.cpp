@@ -69,10 +69,10 @@ void UWDialogueSystemComponent::OpenConversation(EShowType DialogueShowType)
 		else
 		{
 			if(DialogueWidgetClass)
-			{
+			{GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("111111111111111111"));
 				DialogueWidget=CreateWidget<UWDialogueWidget>(GetWorld(),DialogueWidgetClass);
 				if(DialogueWidget)
-				{
+				{GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("22222222222222222"));
 					DialogueWidget->SetDialogueSystemComp(this);
 					DialogueWidget->AddToViewport();
 					ProgressDialogue();
