@@ -242,7 +242,7 @@ void AMyCharacter::Interact()
 
 void AMyCharacter::DectectInteractable()
 {
-	FVector StartLocation = GetActorLocation();
+	/*FVector StartLocation = GetActorLocation();
 	FVector ForwardVector = GetActorForwardVector();
 	FVector CameraForwardVector;
 	if(ViewType==EViewType::TP)
@@ -255,30 +255,88 @@ void AMyCharacter::DectectInteractable()
 	}
 	
 	float TraceDistance = 200.0f; 
-	FVector EndLocation =  (CameraForwardVector * TraceDistance);
+	FVector EndLocation = StartLocation + (CameraForwardVector * TraceDistance);
 
 	FHitResult HitResult;
 	FCollisionQueryParams TraceParams;
 	TraceParams.AddIgnoredActor(this); 
-	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, ECC_Visibility, TraceParams);
+	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, ECC_Visibility, TraceParams);*/
 	
-	// 绘制调试线条
-	FColor LineColor = bHit ? FColor::Green : FColor::Red; // 如果射线检测到了物体，那么线条为绿色，否则为红色
-	float LineLifeTime = 0.5f; // 线条存在的时间
-	DrawDebugLine(GetWorld(), StartLocation, EndLocation, LineColor, false, LineLifeTime);
-	
-	if (bHit)
+
+
+
+
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+
+	if (PlayerController)
 	{
-		AActor* HitActor = HitResult.GetActor();
+		// 获取视口的大小
+		int32 ViewportSizeX, ViewportSizeY;
+		PlayerController->GetViewportSize(ViewportSizeX, ViewportSizeY);
+
+		// 计算屏幕中心的坐标
+		FVector2D ScreenCenter(ViewportSizeX / 2, ViewportSizeY / 2);
+
+		// 将屏幕中心的坐标转换为世界空间的射线
+		FVector WorldLocation, WorldDirection;
+		PlayerController->DeprojectScreenPositionToWorld(ScreenCenter.X, ScreenCenter.Y, WorldLocation, WorldDirection);
+
+		// 进行射线检测
+		FHitResult HitResult;
+		FVector StartLocation = WorldLocation;
+		FVector EndLocation = StartLocation + (WorldDirection * 10000); // 10000是射线的长度，你可以根据需要进行修改
+		FCollisionQueryParams TraceParams;
+		TraceParams.AddIgnoredActor(this);
+		bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, ECC_Visibility, TraceParams);
+		// 绘制调试线条
+		FColor LineColor = bHit ? FColor::Green : FColor::Red; // 如果射线检测到了物体，那么线条为绿色，否则为红色
+		float LineLifeTime = 0.5f; // 线条存在的时间
+		DrawDebugLine(GetWorld(), StartLocation, EndLocation, LineColor, false, LineLifeTime);
 		
-		if (HitActor->GetClass()->ImplementsInterface(UDialogueInterface::StaticClass()))
+		if (bHit)
 		{
-			if(HitActor==Conversable)
+			AActor* HitActor = HitResult.GetActor();
+		
+			if (HitActor->GetClass()->ImplementsInterface(UDialogueInterface::StaticClass()))
 			{
-				return;
+				if(HitActor==Conversable)
+				{
+					return;
+				}
+				Conversable=HitActor;
+				IDialogueInterface::Execute_SetConversableState(Conversable, true);
 			}
-			Conversable=HitActor;
-			IDialogueInterface::Execute_SetConversableState(Conversable, true);
+			else
+			{
+				if(Conversable)
+				{
+					IDialogueInterface::Execute_SetConversableState(Conversable, false);
+					Conversable=nullptr;
+				}
+			}
+		
+			if (HitActor->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
+			{
+				if(HitActor==Interactable)
+				{
+					return;
+				}
+				if(Interactable)
+				{
+					IInteractInterface::Execute_SetInteractableState(Interactable,false);
+				}
+			
+				Interactable=HitActor;
+				IInteractInterface::Execute_SetInteractableState(Interactable,true);
+			}
+			else
+			{
+				if(Interactable)
+				{
+					IInteractInterface::Execute_SetInteractableState(Interactable,false);
+					Interactable=nullptr;
+				}
+			}
 		}
 		else
 		{
@@ -287,42 +345,11 @@ void AMyCharacter::DectectInteractable()
 				IDialogueInterface::Execute_SetConversableState(Conversable, false);
 				Conversable=nullptr;
 			}
-		}
-		
-		if (HitActor->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
-		{
-			if(HitActor==Interactable)
-			{
-				return;
-			}
-			if(Interactable)
-			{
-				IInteractInterface::Execute_SetInteractableState(Interactable,false);
-			}
-			
-			Interactable=HitActor;
-			IInteractInterface::Execute_SetInteractableState(Interactable,true);
-		}
-		else
-		{
 			if(Interactable)
 			{
 				IInteractInterface::Execute_SetInteractableState(Interactable,false);
 				Interactable=nullptr;
 			}
-		}
-	}
-	else
-	{
-		if(Conversable)
-		{
-			IDialogueInterface::Execute_SetConversableState(Conversable, false);
-			Conversable=nullptr;
-		}
-		if(Interactable)
-		{
-			IInteractInterface::Execute_SetInteractableState(Interactable,false);
-			Interactable=nullptr;
 		}
 	}
 }
