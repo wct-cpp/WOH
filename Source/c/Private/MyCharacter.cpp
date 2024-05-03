@@ -255,7 +255,7 @@ void AMyCharacter::DectectInteractable()
 	}
 	
 	float TraceDistance = 200.0f; 
-	FVector EndLocation = StartLocation + (CameraForwardVector * TraceDistance);
+	FVector EndLocation =  (CameraForwardVector * TraceDistance);
 
 	FHitResult HitResult;
 	FCollisionQueryParams TraceParams;
